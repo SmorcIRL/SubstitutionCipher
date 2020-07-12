@@ -11,5 +11,5 @@
 
 ### Полезные ссылки:
 - [Основная статья](https://planetcalc.com/8047/)
-- [Фитнесс-функция](https://planetcalc.com/8045/)
+- [Фитнесс-функция](https://planetcalc.com/8045/) и [реализация](https://github.com/SmorcIRL/TextFitnessCalculator)
 - [Генетический алгоритм](https://people.cs.uct.ac.za/~jkenwood/JasonBrownbridge.pdf)
