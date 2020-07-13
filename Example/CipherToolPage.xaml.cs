@@ -45,9 +45,16 @@ namespace Example
 
         private async void EncodeButton_Click(object sender, RoutedEventArgs e)
         {
+            bool entered = false;
+
             try
             {
-                await _jobSemaphore.WaitAsync();
+                entered = await _jobSemaphore.WaitAsync(TimeSpan.Zero);
+
+                if (!entered)
+                {
+                    return;
+                }
 
                 if (TryGetKey(out var key))
                 {
@@ -62,14 +69,24 @@ namespace Example
             }
             finally
             {
-                _jobSemaphore.Release();
+                if (entered)
+                {
+                    _jobSemaphore.Release();
+                }
             }
         }
         private async void DecodeButton_Click(object sender, RoutedEventArgs e)
         {
+            bool entered = false;
+
             try
             {
-                await _jobSemaphore.WaitAsync();
+                entered = await _jobSemaphore.WaitAsync(TimeSpan.Zero);
+
+                if (!entered)
+                {
+                    return;
+                }
 
                 if (TryGetKey(out var key))
                 {
@@ -84,14 +101,24 @@ namespace Example
             }
             finally
             {
-                _jobSemaphore.Release();
+                if (entered)
+                {
+                    _jobSemaphore.Release();
+                }
             }
         }
         private async void BreakerNavButton_Click(object sender, RoutedEventArgs e)
         {
+            bool entered = false;
+
             try
             {
-                await _jobSemaphore.WaitAsync();
+                entered = await _jobSemaphore.WaitAsync(TimeSpan.Zero);
+
+                if (!entered)
+                {
+                    return;
+                }
 
                 if (TryGetBreakerParams(out int populationSize, out int maxGenerationsCount, out double mutationChance, out int maxGenesToMutate, out double thresholdFitness))
                 {
@@ -108,7 +135,10 @@ namespace Example
             }
             finally
             {
-                _jobSemaphore.Release();
+                if (entered)
+                {
+                    _jobSemaphore.Release();
+                }
             }
         }
 

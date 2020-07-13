@@ -45,7 +45,7 @@ namespace SubstitutionCipher
             _byteAlphabet = new HashSet<byte>(Enumerable.Range(0, _alphabetLength).Select(x => (byte)x).ToArray());
         }
 
-        public string Break(int populationSize, int generationsNumber, double mutationChance, int maxGenesToMutate, double thresholdFitness, TextWriter writer = null)
+        public string Break(int populationSize, int generationsNumber, double mutationChance, int maxGenesToMutate, double thresholdFitness, TextWriter progressWriter = null)
         {
             Guard.Argument(populationSize, nameof(populationSize)).Positive();
             Guard.Argument(generationsNumber, nameof(generationsNumber)).Positive();
@@ -74,16 +74,14 @@ namespace SubstitutionCipher
             {
                 extendedGeneration[i] = CreateNew();
             }
-#if DEBUG
+
             Stopwatch sw = Stopwatch.StartNew();
-#endif
             int gen = 1;
 
             for (; thresholdFitness < generation[0].Fitness && generationsNumber > gen; gen++)
             {
-#if DEBUG
-                writer.WriteLine($"[Gen {gen,4}] {generation[0].Fitness}");
-#endif
+                progressWriter.WriteLine($"[Gen {gen,4}] {generation[0].Fitness}");
+
                 Crossover(generation, extendedGeneration, probabilities);
 
                 Mutation(extendedGeneration, mutationChance, maxGenesToMutate);
@@ -100,13 +98,11 @@ namespace SubstitutionCipher
 
             Array.Sort(generation);
 
-#if DEBUG
-            writer.WriteLine($"\n[Total generations]   {gen}");
-            writer.WriteLine($"[Total time(sec)]     {sw.Elapsed.TotalSeconds}");
-            writer.WriteLine($"[Average ms/gen]      {(double)sw.ElapsedMilliseconds / gen}");
-            writer.WriteLine($"[Best fitness]        {generation[0].Fitness}");
-            writer.WriteLine($"[Best key]            {_cipherMachine.BytesToText(generation[0].Key, _alphabetLength)}\n");
-#endif
+            progressWriter.WriteLine($"\n[Total generations]   {gen}");
+            progressWriter.WriteLine($"[Total time(sec)]     {sw.Elapsed.TotalSeconds}");
+            progressWriter.WriteLine($"[Average ms/gen]      {(double)sw.ElapsedMilliseconds / gen}");
+            progressWriter.WriteLine($"[Best fitness]        {generation[0].Fitness}");
+            progressWriter.WriteLine($"[Best key]            {_cipherMachine.BytesToText(generation[0].Key, _alphabetLength)}\n");
 
             string result = _cipherMachine.RepairTextWithExternalSymbols(_cipherMachine.Decode(_text, generation[0].Key), _symbols);
 
